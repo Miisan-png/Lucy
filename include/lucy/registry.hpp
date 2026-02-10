@@ -120,6 +120,20 @@ public:
 
     size_t size() const { return alive_count_; }
 
+    template<typename T>
+    size_t count() const {
+        auto* p = try_pool<T>();
+        return p ? p->size() : 0;
+    }
+
+    template<typename Func>
+    void each_entity(Func&& func) {
+        for (uint32_t i = 0; i < generations_.size(); i++) {
+            Entity e = entity::make(i, generations_[i]);
+            if (alive(e)) func(e);
+        }
+    }
+
     void clear() {
         pools_.clear();
         generations_.clear();
